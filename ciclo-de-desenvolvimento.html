@@ -1,0 +1,488 @@
+<html lang="pt-br"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reestruturação do Processo de Desenvolvimento v16.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&amp;family=Outfit:wght@300;400;600;800&amp;display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-body: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-card-hover: rgba(51, 65, 85, 0.95);
+            
+            --color-estrat: #c084fc; /* Roxo */
+            --color-proj: #38bdf8;   /* Azul */
+            --color-eng: #4ade80;    /* Verde */
+            --color-mixed: #f472b6;  /* Rosa */
+            
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --border-color: rgba(255, 255, 255, 0.15);
+            
+            --cost-low: #4ade80;
+            --cost-med: #fbbf24;
+            --cost-high: #f87171;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-body);
+            background: linear-gradient(-45deg, #0f172a, #1e293b, #020617, #1e1b4b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-main);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            opacity: 0;
+        }
+        .reveal:nth-child(1) { animation-delay: 0.1s; }
+        .reveal:nth-child(2) { animation-delay: 0.2s; }
+        .reveal:nth-child(3) { animation-delay: 0.3s; }
+
+        .main-page-title { text-align: center; margin-bottom: 60px; }
+        .main-page-title h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .main-page-title .subtitle {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--color-proj);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .dept-definitions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            max-width: 1600px;
+            margin: 0 auto 60px auto;
+            align-items: start;
+        }
+
+        .dept-def-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .dept-def-card:hover { transform: translateY(-5px); background: var(--bg-card-hover); }
+
+        .def-estrat { border-top: 4px solid var(--color-estrat); }
+        .def-projeto { border-top: 4px solid var(--color-proj); }
+        .def-eng { border-top: 4px solid var(--color-eng); }
+
+        .dept-def-card h3 { font-family: 'JetBrains Mono'; font-size: 1.1rem; margin-bottom: 15px; font-weight: 800; }
+        .def-estrat h3 { color: var(--color-estrat); }
+        .def-projeto h3 { color: var(--color-proj); }
+        .def-eng h3 { color: var(--color-eng); }
+
+        .dept-def-card p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
+        .dept-def-card strong { color: #fff; }
+
+        .process-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto 80px auto;
+        }
+        
+        .process-card {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+        .process-card:hover { background: rgba(30, 41, 59, 0.8); border-color: rgba(255,255,255,0.3); }
+        .process-card h4 { color: var(--color-proj); font-family: 'JetBrains Mono'; margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;}
+        .process-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+        .header { max-width: 1400px; margin: 0 auto 30px auto; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
+        .header h2 { color: #fff; font-size: 1.6rem; display: flex; align-items: center; gap: 10px; }
+        .header h2::before { content: ''; display: block; width: 4px; height: 24px; background: var(--color-proj); border-radius: 2px; }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto 80px auto;
+        }
+
+        .phase-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .dept-label {
+            position: absolute; top: 20px; right: 20px; font-size: 0.6rem; font-weight: 700;
+            padding: 3px 8px; border-radius: 20px; text-transform: uppercase; border: 1px solid;
+        }
+        .phase-card.dept-projeto .dept-label { color: var(--color-proj); border-color: var(--color-proj); }
+        .phase-card.dept-engenharia .dept-label { color: var(--color-eng); border-color: var(--color-eng); }
+        .phase-card.dept-misto .dept-label { color: var(--color-mixed); border-color: var(--color-mixed); }
+
+        .phase-card h2 { font-size: 1.3rem; margin: 5px 0 5px 0; font-weight: 700; }
+        .phase-card.dept-projeto h2 { color: var(--color-proj); }
+        .phase-card.dept-engenharia h2 { color: var(--color-eng); }
+        .phase-card.dept-misto h2 { color: var(--color-mixed); }
+
+        .toggle-btn {
+            background: transparent; border: none; color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+            text-transform: uppercase; cursor: pointer; margin-top: auto;
+            text-align: right; display: flex; justify-content: flex-end; align-items: center;
+            gap: 6px; padding: 10px 0 0 0; opacity: 0.6; transition: 0.3s;
+        }
+        .toggle-btn:hover { opacity: 1; color: #fff; }
+        .toggle-btn::after { content: '▼'; font-size: 0.6rem; }
+        .toggle-btn.active::after { content: '▲'; }
+        .toggle-btn span::after { content: ' Ver Detalhes'; }
+        .toggle-btn.active span::after { content: ' Ocultar'; }
+
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out, opacity 0.4s ease; opacity: 0; }
+        .collapsible-content.open { opacity: 1; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px; }
+
+        .detailed-desc {
+            background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 8px; margin-bottom: 15px;
+            border-left: 2px solid; font-size: 0.85rem; line-height: 1.6; color: #cbd5e1;
+        }
+        .dept-projeto .detailed-desc { border-left-color: var(--color-proj); }
+        .dept-engenharia .detailed-desc { border-left-color: var(--color-eng); }
+        .dept-misto .detailed-desc { border-left-color: var(--color-mixed); }
+
+        .section-title { font-family: 'JetBrains Mono'; font-size: 0.65rem; color: #94a3b8; text-transform: uppercase; margin: 12px 0 6px 0; display: block; font-weight: bold; }
+        .item-list { list-style: none; margin-bottom: 10px; }
+        .item-list li { font-size: 0.85rem; padding-left: 15px; position: relative; color: #e2e8f0; margin-bottom: 4px; }
+        .item-list li::before { content: '>'; position: absolute; left: 0; color: #64748b; font-family: 'JetBrains Mono'; font-size: 0.7rem; }
+
+        .roles-container {
+            margin-top: 20px; background: rgba(15, 23, 42, 0.6); border-radius: 8px;
+            padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .role-group h4 { font-size: 0.6rem; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+        .role-tag { display: block; font-size: 0.75rem; padding: 6px 10px; margin-bottom: 5px; border-radius: 4px; color: #fff; border-left: 3px solid; background: rgba(255,255,255,0.05); }
+        .tag-estrat { border-left-color: var(--color-estrat); }
+        .tag-proj { border-left-color: var(--color-proj); }
+        .tag-eng { border-left-color: var(--color-eng); }
+
+        .cost-rule-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1400px; margin: 0 auto 60px auto; }
+        .cost-card { background: var(--bg-card); padding: 25px; border-radius: 12px; border: 1px solid var(--border-color); text-align: center; }
+        .cost-value { font-size: 2.2rem; font-weight: 800; display: block; margin-bottom: 5px; }
+        .c-low { color: var(--cost-low); }
+        .c-med { color: var(--cost-med); }
+        .c-high { color: var(--cost-high); }
+        .cost-card h3 { font-size: 1rem; margin-bottom: 10px; color: #fff; }
+        .cost-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+        .footer-loop { text-align: center; margin: 60px auto; padding: 12px 25px; border: 1px dashed var(--color-eng); border-radius: 30px; color: var(--color-eng); font-family: 'JetBrains Mono'; font-size: 0.75rem; width: fit-content;}
+
+        @media(max-width: 768px) { .cost-rule-container { grid-template-columns: 1fr; } }
+    </style>
+</head><body>
+
+<div class="main-page-title reveal">
+    <h1>Reestruturação do Processo de Desenvolvimento</h1>
+    <span class="subtitle">Governança &amp; Eficiência</span>
+</div>
+
+<div class="dept-definitions reveal">
+    <div class="dept-def-card def-estrat">
+        <h3>1.1. Planejamento Estratégico</h3>
+        <p><strong>Liderança:</strong> José Ricardo e Vinícius.</p>
+        <p><strong>Foco:</strong> Visão macro e alinhamento de longo prazo ("Porquê").</p>
+        <button class="toggle-btn" onclick="toggleCard(this)"><span></span></button>
+        <div class="collapsible-content" style="">
+            <p><strong>Responsabilidade Principal:</strong> Validam se os novos módulos e projetos estão em conformidade com o plano de negócios anual e objetivos da diretoria.</p>
+        </div>
+    </div>
+
+    <div class="dept-def-card def-projeto">
+        <h3>1.2. Departamento de Projeto</h3>
+        <p><strong>Liderança:</strong> Fabrício e Rogério.</p>
+        <p><strong>Foco:</strong> Definição de escopo ("O Quê") e priorização ("Quando").</p>
+        <button class="toggle-btn" onclick="toggleCard(this)"><span></span></button>
+        <div class="collapsible-content" style="">
+            <p><strong>Responsabilidades Principais:</strong> Pesquisa de mercado, validação de dores, criação de PRDs e protótipos de alta fidelidade (UX/UI).</p>
+            <div class="highlight-box">
+                <h4>Autonomia Decisória</h4>
+                <p>Pode ajustar funcionalidades se: 1) Sem custos diretos extras; 2) Sem impacto crítico no tempo da Engenharia. Deve sempre analisar o cronograma.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dept-def-card def-eng">
+        <h3>1.3. Depto de Engenharia</h3>
+        <p><strong>Liderança:</strong> João.</p>
+        <p><strong>Foco:</strong> Arquitetura técnica e estabilidade ("Como").</p>
+        <button class="toggle-btn" onclick="toggleCard(this)"><span></span></button>
+        <div class="collapsible-content" style="">
+            <p><strong>Responsabilidades Principais:</strong> Execução do projeto técnico, definição de infraestrutura, realização de POCs e garantia de segurança do código.</p>
+        </div>
+    </div>
+</div>
+
+<div class="header reveal">
+    <h2>2. Diretrizes do Processo (Mandatório)</h2>
+</div>
+
+<div class="process-grid reveal">
+    <div class="process-card">
+        <h4>📄 Definição de Artefatos</h4>
+        <p>O Departamento de Projeto deve garantir a entrega dos artefatos: PRD, Protótipo (Figma), TDD, Cronograma Atualizado e Backlog de Entregas. A Engenharia só inicia o desenvolvimento mediante esses artefatos.</p>
+    </div>
+    <div class="process-card">
+        <h4>🤝 Fase de Transição</h4>
+        <p>Deve haver transição formal entre as fases. Nenhuma etapa pode ser iniciada sem que os artefatos da fase anterior tenham sido entregues e validados por quem recebe o bastão.</p>
+    </div>
+    <div class="process-card">
+        <h4>🔄 Ciclo PDCA</h4>
+        <p>O desenvolvimento opera como um ciclo PDCA contínuo: Fase 01 (Agir), Fases 02-04 (Planejar), Fase 05 (Fazer) e Fase 06 (Checar) para validação do sucesso.</p>
+    </div>
+    <div class="process-card">
+        <h4>📊 Estimativa Baseada em Dados</h4>
+        <p>Prazos são projetados usando histórico real e IA, baseando-se no recurso de menor expertise para garantir uma margem de segurança realista.</p>
+    </div>
+    <div class="process-card">
+        <h4>🚫 Cultura "Sem Remendos"</h4>
+        <p>Se uma falha de planejamento for detectada na execução, o projeto PARA e retorna ao planejamento. É proibido improvisar soluções fora do escopo definido.</p>
+    </div>
+    <div class="process-card">
+        <h4>🧠 Questionamento Saudável</h4>
+        <p>A Engenharia tem o dever de questionar o Projeto se identificar ineficiências técnicas. O papel da Engenharia é consultivo e crítico, não apenas executor.</p>
+    </div>
+    <div class="process-card">
+        <h4>📄 Registro Fonte da Verdade</h4>
+        <p>Não há solicitações ou decisões verbais. Tudo deve ser documentado, gravado e rastreável. O que não está registrado, não existe e não será executado.</p>
+    </div>
+    <div class="process-card">
+        <h4>🎨 Protótipo é o Limite</h4>
+        <p>O que não está no PRD, Figma e TDD, não está no código. Mudanças durante o desenvolvimento são tratadas como novo escopo e devem retornar à Fase 02.</p>
+    </div>
+</div>
+
+<div class="header reveal">
+    <h2>3. Fluxo de Desenvolvimento (Timeline)</h2>
+</div><div class="timeline">
+    <div class="phase-card dept-projeto reveal">
+        <div class="dept-label">Projeto</div>
+        <h2>01. Descoberta</h2>
+        <p>Validação da dor do cliente e aprendizado estratégico.</p>
+        <button class="toggle-btn" onclick="toggleCard(this)"><span></span></button>
+        <div class="collapsible-content" style="">
+            <div class="detailed-desc">Aprendizados de ciclos anteriores retroalimentam a estratégia, definindo novas oportunidades reais de mercado.</div>
+            <span class="section-title">Subfases</span>
+            <ul class="item-list">
+                <li>Pesquisas de Mercado</li>
+                <li>Validação de Viabilidade Inicial</li>
+                <li>Definição do "O Quê" macro</li>
+            </ul>
+            <div class="roles-container">
+                <div class="role-group"><h4>Requeridos</h4><span class="role-tag tag-proj">Projeto</span></div>
+                <div class="role-group"><h4>Consultivos</h4><span class="role-tag tag-estrat">Planejamento</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="phase-card dept-projeto reveal">
+        <div class="dept-label">Projeto</div>
+        <h2>02. Definição &amp; UX</h2>
+        <p>Materialização do conceito e regras de negócio.</p>
+        <button class="toggle-btn" onclick="toggleCard(this)"><span></span></button>
+        <div class="collapsible-content" style="">
+            <div class="detailed-desc">Escrita detalhada de requisitos e desenho de fluxos. Alterações aqui têm custo mínimo ($1).</div>
+            <span class="section-title">Artefatos</span>
+            <ul class="item-list"><li>PRD (Requisitos)</li><li>Protótipo Figma</li></ul>
+            <div class="roles-container">
+                <div class="role-group"><h4>Requeridos</h4><span class="role-tag tag-proj">Projeto</span></div>
+                <div class="role-group"><h4>Consultivos</h4><span class="role-tag tag-eng">Gerente de Eng.</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="phase-card dept-engenharia reveal">
+        <div class="dept-label">Engenharia</div>
+        <h2>03. Viabilidade Técnica</h2>
+        <p>Análise de arquitetura e validação técnica.</p>
+        <button class="toggle-btn" onclick="toggleCard(this)"><span></span></button>
+        <div class="collapsible-content" style="">
+            <div class="detailed-desc">Definição do "Como". Engenharia avalia se o PRD é executável e cria o desenho técnico (TDD).</div>
+            <span class="section-title">Artefatos</span>
+            <ul class="item-list"><li>TDD (Design Técnico)</li><li>POCs concluídos</li></ul>
+            <div class="roles-container">
+                <div class="role-group"><h4>Requeridos</h4><span class="role-tag tag-eng">Engenharia</span></div>
+                <div class="role-group"><h4>Consultivos</h4><span class="role-tag tag-proj">Projeto</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="phase-card dept-misto reveal">
+        <div class="dept-label">Misto</div>
+        <h2>04. Planejamento</h2>
+        <p>Acordo final de prazos e impacto.</p>
+        <button class="toggle-btn" onclick="toggleCard(this)"><span></span></button>
+        <div class="collapsible-content" style="">
+            <div class="detailed-desc">O "Contrato" é firmado. Projeto e Engenharia concordam com o cronograma antes de iniciar a produção.</div>
+            <span class="section-title">Subfases</span>
+            <ul class="item-list">
+                <li>Priorização das Entregas</li>
+                <li>Estimativas de Esforço</li>
+                <li>Análise de Impacto no Cronograma</li>
+            </ul>
+            <span class="section-title">Artefatos</span>
+            <ul class="item-list"><li>Backlog de Entregas</li><li>Cronograma Atualizado</li></ul>
+             <div class="roles-container">
+                <div class="role-group"><h4>Requeridos</h4>
+                    <span class="role-tag tag-proj">Projeto</span>
+                    <span class="role-tag tag-eng">Engenharia</span>
+                </div>
+                <div class="role-group"><h4>Consultivos</h4>
+                    <span class="role-tag tag-estrat">Planejamento</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="phase-card dept-engenharia reveal">
+        <div class="dept-label">Engenharia</div>
+        <h2>05. Desenvolvimento e Testes</h2>
+        <p>Codificação rigorosa e garantia de qualidade.</p>
+        <button class="toggle-btn" onclick="toggleCard(this)"><span></span></button>
+        <div class="collapsible-content" style="">
+            <div class="detailed-desc">Execução técnica fiel aos artefatos. Alterações aqui custam $10. Erros de plano param o projeto.</div>
+            <span class="section-title">Subfases</span>
+            <ul class="item-list">
+                <li>Codificação e Revisão de Código</li>
+                <li>Testes Automatizados</li>
+                <li>Testes Manuais</li>
+                <li>Retrospectiva</li>
+            </ul>
+            <span class="section-title">Artefatos</span>
+            <ul class="item-list">
+                <li>Código Fonte</li>
+                <li>Release e Hotfix</li>
+            </ul>
+            <div class="roles-container">
+                <div class="role-group"><h4>Requeridos</h4>
+                    <span class="role-tag tag-eng">Engenharia</span></div>
+                <div class="role-group"><h4>Consultivos</h4>
+                    <span class="role-tag tag-proj">Projeto</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="phase-card dept-projeto reveal">
+        <div class="dept-label">Projeto</div>
+        <h2>06. Entrega</h2>
+        <p>Lançamento e monitoramento de resultados.</p>
+        <button class="toggle-btn" onclick="toggleCard(this)"><span></span></button>
+        <div class="collapsible-content" style="">
+            <div class="detailed-desc">Validação do sucesso. Se houver falha após o deploy, o custo é de $100.</div>
+            <span class="section-title">Subfases</span>
+            <ul class="item-list">
+                <li>Monitoramento</li>
+                <li>Coleta de Feedback</li>
+                <li>Lições Aprendidas</li>
+            </ul> 
+           <span class="section-title">Artefatos</span>
+            <ul class="item-list">
+                <li>Métricas</li>
+                <li>Lições Aprendidas</li>
+            </ul>
+            <div class="roles-container">
+                <div class="role-group"><h4>Requeridos</h4>
+                    <span class="role-tag tag-proj">Projeto</span></div>
+                <div class="role-group"><h4>Consultivos</h4>
+                    <span class="role-tag tag-estrat">Planejamento</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="header reveal">
+    <h2>4. Gestão de Qualidade (Custo da Mudança)</h2>
+</div>
+
+<div class="cost-rule-container reveal">
+    <div class="cost-card">
+        <span class="cost-value c-low">$ 1</span>
+        <h3>Projeto</h3>
+        <p>Alterar protótipos e PRDs é rápido e barato. É o momento de errar e ajustar.</p>
+    </div>
+    <div class="cost-card">
+        <span class="cost-value c-med">$ 10</span>
+        <h3>Desenvolvimento</h3>
+        <p>Mudanças no código geram refação, atrasos no cronograma e riscos técnicos.</p>
+    </div>
+    <div class="cost-card">
+        <span class="cost-value c-high">$ 100</span>
+        <h3>Produção</h3>
+        <p>Erros ou mudanças após o lançamento impactam a marca e o suporte.</p>
+    </div>
+</div>
+
+<div class="footer-loop reveal">
+    ♻️ Este manual serve como a Constituição Técnica e Estratégica da operação.
+</div>
+
+<script>
+    function toggleCard(btn) {
+        const content = btn.nextElementSibling;
+        btn.classList.toggle("active");
+        
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+            content.classList.remove("open");
+        } else {
+            content.style.maxHeight = (content.scrollHeight + 60) + "px";
+            content.classList.add("open");
+        }
+    }
+</script>
+
+
+
+
+
+</body></html>
