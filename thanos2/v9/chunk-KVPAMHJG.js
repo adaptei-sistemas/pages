@@ -1,1 +1,0 @@
-import{a as t}from"./chunk-UXNIXJS6.js";import"./chunk-6Q3DK6GG.js";var e=[{path:"",loadComponent:()=>import("./chunk-KJWMJXAD.js").then(o=>o.MotivosListaComponent),canActivate:[t],data:{title:"Motivos"}}];export{e as MOTIVOS_ROUTES};

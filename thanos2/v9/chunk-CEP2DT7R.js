@@ -1,1 +1,0 @@
-import{a as t}from"./chunk-UXNIXJS6.js";import"./chunk-6Q3DK6GG.js";var r=[{path:"",loadComponent:()=>import("./chunk-5SIWWRU7.js").then(o=>o.UsuarioListaComponent),canActivate:[t],data:{title:"Usu\xE1rios"}}];export{r as USUARIO_ROUTES};
