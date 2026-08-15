@@ -1,0 +1,1 @@
+import{a as t}from"./chunk-UXNIXJS6.js";import"./chunk-6Q3DK6GG.js";var e=[{path:"",loadComponent:()=>import("./chunk-KSHLNSJP.js").then(o=>o.ReplicacaoListaComponent),canActivate:[t],data:{title:"Replica\xE7\xE3o"}}];export{e as REPLICACAO_ROUTES};
